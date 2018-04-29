@@ -1,0 +1,8 @@
+.proj*
+.out*
+.class*
+.work*
+bin/*
+out/*
+.sett*
+
