@@ -4,39 +4,62 @@ import hashlib
 import os
 
 def main():
-    register()
+	answer = raw_input("Have you logged into this server before?  Yes/No\n")
+	a = answer.lower()
+	if(a== "yes"):
+		login()
+	else:
+		register()
 
 def register():
-    print("REGISTER...")
-    username = raw_input("Please input your desired username:")
-    password = raw_input("Please input your desired password:")
-    salt = os.urandom(16)
-    m = hashlib.md5()
-    m.update(salt + password)
-    password=m.digest()
-    file = open("accountfile.txt","a")
-    file.write(username)
-    file.write(" ")
-    file.write(password)
-    file.write("\n")
-    file.close()
-    if login():
-        print("You are now logged in...")
-    else:
-        print("You aren't logged in!")
+	username = raw_input("Please input your desired username:\n")
+	password = raw_input("Please input your desired password:\n")
+	m = hashlib.md5()
+	m.update(password)
+	password = m.digest()
+	file = open("accountfile.txt", "a")
+	file.write(username)
+	file.write(" ")
+	file.write(password)
+	file.write("\n")
+	file.close()
+	print("You are now registered and logged in\n")
+	return
 
 def login():
-    print("LOGIN...")
-    username = raw_input("Please enter your username:")
-    password = raw_input("Please enter your password:")  
-    for line in open("accountfile.txt","r").readlines(): # Read the lines
-        login_info = line.split() # Split on the space, and store the results in a list of two strings
-        if username == login_info[0] and password == login_info[1]:
-            print("Correct credentials!")
-            return True
-    print("Incorrect credentials.")
-    return False
-
-# create a main function in Python
+	username = raw_input("Please enter your username:\n")
+	password = raw_input("Please enter your password:\n")
+	n = hashlib.md5()
+	n.update(password)
+	password = n.digest()
+	didFind=0
+	for line in open("accountfile.txt", "r").readlines():
+		login_info = line.split()
+		if username == login_info[0] and password == login_info[1]:
+			print("You are logged in!")
+			didFind=1
+			return
+		else:
+			continue
+	count = 0
+	while count < 3 and didFind == 0:
+		print("Wrong username or password, please try again:\n")
+		username = raw_input("Please enter your username:\n")
+		password = raw_input("Please enter your password:\n")
+		k = hashlib.md5()
+		k.update(password)
+		password = k.digest()
+		file = open("accountfile.txt", "r")
+		for line in file.readlines():
+			login_info = line.split()
+			if username == login_info[0] and password == login_info[1]:
+				print("You are logged in!")
+				didFind = 1
+				return
+			else:
+				continue
+		count += 1
+		file.close()
+	print("You have used all your login attempts")
 if __name__ == "__main__":
     main()
