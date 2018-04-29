@@ -3,7 +3,7 @@
 import hashlib
 import os
 import socket
-from _thread import*
+from thread import*
 import threading
 
 print_lock = threading.Lock()
@@ -23,28 +23,28 @@ def threaded(c):
 	c.send(data)
 	answer = c.recv(40)
 	a = answer.lower()
-	if(a=="yes"):
-		n = login()
+	if a == "yes":
+		n = login(c)
 	else:
-		register()
-	if(n==1)
+		register(c)
+        if n == 1:
 		message = "The groups are..."
 		c.send(data)
-		while true:
-			data = s.recv(1024)
-			if(data == "END"):
-				#
-			if(data == "GET"):
+		#while true:
+		    #data = s.recv(1024)
+		    #if data == "END":
+		        
+		    #if data == "GET":
 			   	#
-			if(data == "POST"):
+		    #if data == "POST":
 				#
-			print_lock.release()
+		#print_lock.release()
 		c.close()
 
 
 def main():
 	host = ""
-	port = 12345
+	port = 1234
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 	s.bind((host, port))
@@ -55,11 +55,11 @@ def main():
 	while True:
 		c, addr = s.accept()
 		print_lock.acquire()
-		start_new_thread(threaded, (c,))
+		start_new_thread(threaded, (c, ))
 
 	s.close()
 
-def register():
+def register(c):
 	data = "Please input your desired username:"
 	c.send(data)
 	username = c.recv(100)
@@ -78,7 +78,7 @@ def register():
 	print("You are now registered and logged in\n")
 	return
 
-def login():
+def login(c):
 	data = "Please input your desired username:"
 	c.send(data)
 	username = c.recv(100)
