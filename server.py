@@ -9,15 +9,38 @@ import threading
 print_lock = threading.Lock()
 
 def threaded(c):
-	while true:
-		data = "Have you logged into this server before? Yes/No\n"
+	message = "Would you like to verify this server's SSL certificate? Yes/No"
+	c.send(message)
+	answer = c.recv(100)
+	a = answer.lower()
+	if(a == "yes"):
+		f = open('domain.crt', 'rb')
+		l = f.read(2048)
+		data = "Sending domain.crt...\n"
 		c.send(data)
-		answer = c.recv(40)
-		a = answer.lower()
-		if(a=="yes"):
-			login()
-		else:
-			register()
+		c.send(l)
+	data = "Have you logged into this server before? Yes/No\n"
+	c.send(data)
+	answer = c.recv(40)
+	a = answer.lower()
+	if(a=="yes"):
+		n = login()
+	else:
+		register()
+	if(n==1)
+		message = "The groups are..."
+		c.send(data)
+		while true:
+			data = s.recv(1024)
+			if(data == "END"):
+				#
+			if(data == "GET"):
+			   	#
+			if(data == "POST"):
+				#
+			print_lock.release()
+		c.close()
+
 
 def main():
 	host = ""
@@ -71,7 +94,7 @@ def login():
 		if username == login_info[0] and password == login_info[1]:
 			print("You are logged in!")
 			didFind=1
-			return
+			return 1
 		else:
 			continue
 	count = 0
@@ -94,7 +117,7 @@ def login():
 				data = "You are logged in"
 				c.send(data)
 				didFind = 1
-				return
+				return 1
 			else:
 				continue
 		count += 1
