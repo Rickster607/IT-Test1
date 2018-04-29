@@ -2,18 +2,47 @@
 
 import hashlib
 import os
+import socket
+from _thread import*
+import threading
+
+print_lock = threading.Lock()
+
+def threaded(c):
+	while true:
+		data = "Have you logged into this server before? Yes/No\n"
+		c.send(data)
+		answer = c.recv(40)
+		a = answer.lower()
+		if(a=="yes"):
+			login()
+		else:
+			register()
 
 def main():
-	answer = raw_input("Have you logged into this server before?  Yes/No\n")
-	a = answer.lower()
-	if(a== "yes"):
-		login()
-	else:
-		register()
+	host = ""
+	port = 12345
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+	s.bind((host, port))
+	print("Socket bound to port", port)
+
+	s.listen(5)
+
+	while True:
+		c, addr = s.accept()
+		print_lock.acquire()
+		start_new_thread(threaded, (c,))
+
+	s.close()
 
 def register():
-	username = raw_input("Please input your desired username:\n")
-	password = raw_input("Please input your desired password:\n")
+	data = "Please input your desired username:"
+	c.send(data)
+	username = c.recv(100)
+	data = "Please input your desired password:"
+	c.send(data)
+	password = c.recv(100)
 	m = hashlib.md5()
 	m.update(password)
 	password = m.digest()
@@ -27,8 +56,12 @@ def register():
 	return
 
 def login():
-	username = raw_input("Please enter your username:\n")
-	password = raw_input("Please enter your password:\n")
+	data = "Please input your desired username:"
+	c.send(data)
+	username = c.recv(100)
+	data = "Please input your desired password:"
+	c.send(data)
+	password = c.recv(100)
 	n = hashlib.md5()
 	n.update(password)
 	password = n.digest()
@@ -43,9 +76,14 @@ def login():
 			continue
 	count = 0
 	while count < 3 and didFind == 0:
-		print("Wrong username or password, please try again:\n")
-		username = raw_input("Please enter your username:\n")
-		password = raw_input("Please enter your password:\n")
+		data = "Wrong username or password, please try again"
+		c.send(data)
+		data = "Please enter your username:"
+		c.send(data)
+		username = c.recv(100)
+		data = "Please enter your password"
+		c.send(data)
+		password = c.recv(100)
 		k = hashlib.md5()
 		k.update(password)
 		password = k.digest()
@@ -53,13 +91,15 @@ def login():
 		for line in file.readlines():
 			login_info = line.split()
 			if username == login_info[0] and password == login_info[1]:
-				print("You are logged in!")
+				data = "You are logged in"
+				c.send(data)
 				didFind = 1
 				return
 			else:
 				continue
 		count += 1
 		file.close()
-	print("You have used all your login attempts")
+	data = "You have used all your login attempts"
+	c.send(data)
 if __name__ == "__main__":
     main()
