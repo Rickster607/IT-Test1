@@ -15,22 +15,24 @@ def Main():
     # connect to server on local computer
     s.connect((host,port))
  
-    # message you send to server
-    message = "shaurya says geeksforgeeks"
+    #log in
+    while True:
+
+        data = s.recv(1024)
+        if data == "You are logged in\n":
+            break
+        ans = input(data)
+        s.send(ans.encode('ascii'))
+    
+    
+    # messages
     while True:
  
-        # message sent to server
+        message = input("Message to send")
         s.send(message.encode('ascii'))
- 
-        # messaga received from server
         data = s.recv(1024)
- 
-        # print the received message
-        # here it would be a reverse of sent message
         print('Received from the server :', str(data.decode('ascii')))
 
- 
-    # close the connection
     s.close()
  
 if __name__ == '__main__':
