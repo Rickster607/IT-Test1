@@ -14,7 +14,18 @@ def Main():
  
     # connect to server on local computer
     s.connect((host,port))
- 
+
+    #verify SSL
+    
+    data = s.recv(1024)
+    ans = input(data)
+    s.send(ans.encode('ascii')
+    if ans == Yes:
+        data = s.recv(1024)
+        print(data)
+        data = s.recv(2048)
+        print(data)
+
     #log in
     while True:
 
@@ -30,6 +41,8 @@ def Main():
  
         message = input("Message to send")
         s.send(message.encode('ascii'))
+        if message == "END":
+            break
         data = s.recv(1024)
         print('Received from the server :', str(data.decode('ascii')))
 
